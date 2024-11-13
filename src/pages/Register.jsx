@@ -19,6 +19,7 @@ const Register = () => {
 
   const onError = (error) => {
     console.log("Registration failed", error);
+    alert("Registration failed. Please check your credentials and try again.");
   };
 
   // Use the custom useRegister hook with success and error callbacks
