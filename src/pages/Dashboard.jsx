@@ -55,6 +55,10 @@ const Dashboard = () => {
     error: fetchError,
   } = useFetchStocks(dateRange, chartType, topN);
 
+  useEffect(() => {
+    console.log("stock", stocks);
+  }, [stocks]);
+
   // Handle fetch errors
   useEffect(() => {
     if (fetchError) {
@@ -105,14 +109,24 @@ const Dashboard = () => {
       "rgba(201, 203, 207, 1)", // grey
     ];
 
-    if (role === "user1") {
-      if (!stocks || Object.keys(stocks).length === 0) {
-        return {
-          labels: [],
-          datasets: [],
-        };
-      }
+    if (!stocks || Object.keys(stocks).length === 0) {
+      // Return an empty chart configuration if stocks data is undefined or empty
+      return {
+        labels: [],
+        datasets: [],
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: "No Data Available",
+            },
+          },
+        },
+      };
+    }
 
+    if (role === "user1") {
       const allDates = Array.from(
         new Set(
           Object.values(stocks)
@@ -154,37 +168,29 @@ const Dashboard = () => {
             x: {
               title: {
                 display: true,
-                text: "Date", // X-axis label
+                text: "Date",
                 font: {
-                  size: 14, // Font size for x-axis label
+                  size: 14,
                   weight: "bold",
                 },
-                color: "#333", // Color for x-axis label
+                color: "#333",
               },
             },
             y: {
               title: {
                 display: true,
-                text: "Close Price (USD)", // Y-axis label
+                text: "Close Price (USD)",
                 font: {
-                  size: 14, // Font size for y-axis label
+                  size: 14,
                   weight: "bold",
                 },
-                color: "#333", // Color for y-axis label
+                color: "#333",
               },
             },
           },
         },
       };
-    } else if (role == "user2") {
-      if (!stocks || Object.keys(stocks).length === 0) {
-        return {
-          labels: [],
-          datasets: [],
-        };
-      }
-
-      // Extract all unique dates across all stock symbols and sort them
+    } else if (role === "user2") {
       const allDates = Array.from(
         new Set(
           Object.values(stocks)
@@ -193,28 +199,24 @@ const Dashboard = () => {
         )
       ).sort((a, b) => new Date(a) - new Date(b));
 
-      // Map through each stock symbol and prepare dataset for bar chart
       const datasets = Object.keys(stocks).map((symbol, index) => {
         const stockData = stocks[symbol];
-
-        // Create a date-to-closePrice mapping for this symbol
         const dateToClosePrice = stockData.reduce((acc, dataPoint) => {
           acc[dataPoint.DATE] = dataPoint.CLOSE_PRICE;
           return acc;
         }, {});
 
-        // Ensure the dataset aligns with all dates, using null if a date has no data
         const data = allDates.map((date) => dateToClosePrice[date] || null);
 
         return {
-          label: symbol, // Label for each stock
-          data: data, // Close prices aligned with dates
+          label: symbol,
+          data: data,
           backgroundColor: colorPalette[index % colorPalette.length],
         };
       });
 
       return {
-        labels: allDates.map((date) => new Date(date).toLocaleDateString()), // X-axis with formatted dates
+        labels: allDates.map((date) => new Date(date).toLocaleDateString()),
         datasets: datasets,
         options: {
           responsive: true,
@@ -241,14 +243,6 @@ const Dashboard = () => {
         },
       };
     } else if (role === "user3") {
-      if (!stocks || Object.keys(stocks).length === 0) {
-        return {
-          labels: [],
-          datasets: [],
-        };
-      }
-
-      // Filter out null values and their corresponding labels
       const filteredData = stocks.data
         .map((value, index) =>
           value !== null ? { value, label: stocks.labels[index] } : null
