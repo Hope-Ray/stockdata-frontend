@@ -5,21 +5,21 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 function App() {
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
 
-    // Check for token and avoid redirecting if already on login or register page
-    if (
-      !token &&
-      location.pathname !== "/login" &&
-      location.pathname !== "/register"
-    ) {
-      window.location.href = "/login";
-    }
-  }, [location.pathname]);
+  //   // Check for token and avoid redirecting if already on login or register page
+  //   if (
+  //     !token &&
+  //     location.pathname !== "/login" &&
+  //     location.pathname !== "/register"
+  //   ) {
+  //     window.location.href = "/login";
+  //   }
+  // }, [location.pathname]);
   return (
     <>
       <Router>
